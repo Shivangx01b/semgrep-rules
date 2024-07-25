@@ -1,5 +1,5 @@
 fn sqlx_sqli() {
-    //todoruleid: sqlx-sqli
+    //ruleid: sqlx-sqli
     sqlx::query!(format!("SELECT {} from tmp", "x"));
 }
 

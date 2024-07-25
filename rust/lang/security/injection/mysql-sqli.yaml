@@ -3,15 +3,7 @@ rules:
     languages:
       - rust
     message: >
-      Detected string concatenation with a non-literal variable in a go-pg
-
-      SQL statement. This could lead to SQL injection if the variable is user-controlled
-
-      and not properly sanitized. In order to prevent SQL injection,
-
-      used parameterized queries instead of string concatenation. You can use parameterized queries like so:
-
-      '(SELECT ? FROM table, data1)'
+      Detected string concatenation with a non-literal variable in an SQL statement. This could lead to SQL injection if the variable is user-controlled and not properly sanitized. In order to prevent SQL injection, use parameterized queries instead of string concatenation.
     metadata:
       owasp: 'A1: Injection'
       references:
@@ -22,22 +14,21 @@ rules:
           - patterns:
               - pattern: |
                   $CONN.query_first($QUERY)
-#              - pattern-either: //bug by semgrep https://github.com/returntocorp/semgrep-rules/issues/3128
-#                  - pattern-inside: |
-#                      $QUERY = $X + $Y
-#                      ...
-#                  - pattern-inside: |
-#                      $QUERY += $X
-#                      ...
-#                  - pattern-inside: |
-#                      $QUERY = format!($PARAM1, ...)
-#                      ...
-#              - pattern-not-inside: |
-#                  $QUERY += "..."
-#                  ...
-#              - pattern-not-inside: |
-#                  $QUERY = "..." + "..."
-#                  ...
+              - pattern-either:
+                  - pattern-inside: |
+                      $QUERY = $X + $Y;
+                      ...
+                  - pattern-inside: |
+                      $QUERY += $X;
+                      ...
+                  - pattern-inside: |
+                      $QUERY = format!($PARAM1, ...);
+                      ...
           - pattern: $CONN.query_first($X + $Y)
           - pattern: $CONN.query_first(format!("...", $PARAM1, ...))
-
+      - pattern-not-inside: |
+          $QUERY += "...";
+          ...
+      - pattern-not-inside: |
+          $QUERY = "..." + "...";
+          ...
