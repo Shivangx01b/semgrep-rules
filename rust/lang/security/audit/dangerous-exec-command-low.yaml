@@ -1,14 +1,11 @@
 rules:
-  - id: dangerous-exec-command
+  - id: dangerous-exec-command-low
     patterns:
       - pattern-either:
           - patterns:
               - pattern-either:
                   - pattern: |
                       Command::new($CMD)
-              - metavariable-regex:
-                  metavariable: $CMD
-                  regex: "^(?!r#\".*\".*\"#).*?(?<!\")$"
           - patterns:
               - pattern-either:
                   - pattern: |
@@ -17,9 +14,6 @@ rules:
                       Command::new("=~/(sh|bash|ksh|csh|tcsh|zsh)/").arg("-c").arg($CMD).output()
                   - pattern: |
                       Command::new("=~/(sh|bash|ksh|csh|tcsh|zsh)/").arg("-c").arg($CMD).output().expect(...)
-              - metavariable-regex:
-                  metavariable: $CMD
-                  regex: "^(?!r#\".*\".*\"#).*?(?<!\")$"
       - pattern-inside: |
           use std::process::Command;
           ...
@@ -34,5 +28,5 @@ rules:
     metadata:
       cwe: "CWE-94: Improper Control of Generation of Code ('Code Injection')"
       owasp: 'A1: Injection'
-    severity: WARNING
+    severity: INFO
     languages: [rust]
